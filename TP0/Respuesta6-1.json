@@ -1,0 +1,20 @@
+{
+  "datos": [
+    {
+      "id": "prod_89",
+      "nombre": "Teclado",
+      "precio": 15000
+    },
+    {
+      "id": "prod_90",
+      "nombre": "Mouse",
+      "precio": 8000
+    }
+  ],
+  "metadatos": {
+    "limite": 2,
+    "cursor_actual": "prod_88",
+    "siguiente_cursor": "prod_90",
+    "hay_mas": true
+  }
+}
