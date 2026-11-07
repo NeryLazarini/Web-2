@@ -7,6 +7,10 @@ public class FavoritoOutputDTO {
     private Long productoId;
     private String notaPersonal;
     private LocalDate fechaAgregado;
+    private Long listaId;
+
+    public Long getListaId() { return listaId; }
+    public void setListaId(Long listaId) { this.listaId = listaId; }
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public Long getProductoId() { return productoId; }

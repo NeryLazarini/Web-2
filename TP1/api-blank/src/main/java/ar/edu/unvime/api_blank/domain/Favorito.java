@@ -7,6 +7,10 @@ public class Favorito {
     private Long productoId;
     private String notaPersonal;
     private LocalDate fechaAgregado;
+    private Long listaId;
+
+    public Long getListaId() { return listaId; }
+    public void setListaId(Long listaId) { this.listaId = listaId; }
 
     public Favorito() {
         this.fechaAgregado = LocalDate.now(); // Se asigna la fecha actual automáticamente

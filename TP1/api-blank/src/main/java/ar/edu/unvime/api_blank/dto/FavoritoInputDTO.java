@@ -16,4 +16,10 @@ public class FavoritoInputDTO {
 
     public String getNotaPersonal() { return notaPersonal; }
     public void setNotaPersonal(String notaPersonal) { this.notaPersonal = notaPersonal; }
+    
+    @NotNull(message = "El ID de la lista no puede ser nulo")
+    private Long listaId;
+
+    public Long getListaId() { return listaId; }
+    public void setListaId(Long listaId) { this.listaId = listaId; }
 }

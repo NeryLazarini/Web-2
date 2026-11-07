@@ -1,6 +1,7 @@
 package ar.edu.unvime.api_blank.exception;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -34,7 +35,10 @@ public class GlobalExceptionHandler {
         }
         return errores;
     }
-
+@ExceptionHandler(ListaConFavoritosException.class)
+public ResponseEntity<String> handleListaConFavoritos(ListaConFavoritosException ex) {
+    return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+}
     // Caso 3: Falla al consumir la API externa (timeout o caída) -> Devuelve 500 Internal Server Error
     @ExceptionHandler(RestClientException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
