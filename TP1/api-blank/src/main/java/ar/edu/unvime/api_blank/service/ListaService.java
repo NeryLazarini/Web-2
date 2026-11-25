@@ -5,7 +5,8 @@ import ar.edu.unvime.api_blank.repository.FavoritoRepository;
 import ar.edu.unvime.api_blank.repository.ListaRepository;
 import ar.edu.unvime.api_blank.exception.ListaConFavoritosException;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
+import ar.edu.unvime.api_blank.domain.Favorito;
 import java.util.List;
 
 @Service
@@ -18,6 +19,8 @@ public class ListaService {
         this.favoritoRepository = favoritoRepository;
     }
 
+
+    
     public Lista guardar(Lista lista) {
         return listaRepository.save(lista);
     }
@@ -37,5 +40,25 @@ public class ListaService {
             throw new ListaConFavoritosException("No se puede eliminar la lista porque tiene favoritos asociados.");
         }
         listaRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void moverFavoritos(Long origenId, Long destinoId) {
+        // 1. Validar que ambas listas existan (obtenerPorId lanza error si no existen)
+        obtenerPorId(origenId);
+        obtenerPorId(destinoId);
+
+        // 2. Obtener todos los favoritos de la lista origen
+        List<Favorito> favoritos = favoritoRepository.findByListaId(origenId);
+
+        // 3. Cambiarles el ID a la lista destino y guardarlos
+        for (Favorito f : favoritos) {
+            f.setListaId(destinoId);
+            favoritoRepository.save(f);
+        }
+
+        // 4. Eliminar la lista de origen (forzamos el borrado directo en el repositorio 
+        // ya que ahora está vacía)
+        listaRepository.deleteById(origenId);
     }
 }

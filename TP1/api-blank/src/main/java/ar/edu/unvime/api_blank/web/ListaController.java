@@ -73,4 +73,13 @@ public class ListaController {
         listaService.eliminar(id);
         return ResponseEntity.noContent().build();
     }
+    
+    @PostMapping("/{origenId}/mover-favoritos")
+    public ResponseEntity<Void> moverFavoritos(
+            @PathVariable Long origenId, 
+            @RequestParam Long destinoId) {
+        
+        listaService.moverFavoritos(origenId, destinoId);
+        return ResponseEntity.noContent().build();
+    }
 }
