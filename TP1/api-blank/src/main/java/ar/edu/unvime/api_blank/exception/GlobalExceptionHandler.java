@@ -47,4 +47,19 @@ public ResponseEntity<String> handleListaConFavoritos(ListaConFavoritosException
         respuesta.put("error", "Ocurrió un problema al comunicarse con el catálogo de productos.");
         return respuesta;
     }
+
+    @ExceptionHandler(EmailDuplicadoException.class)
+public ResponseEntity<String> handleEmailDuplicado(EmailDuplicadoException ex) {
+    return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+}
+
+@ExceptionHandler(CredencialesInvalidasException.class)
+public ResponseEntity<String> handleCredencialesInvalidas(CredencialesInvalidasException ex) {
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
+}
+
+@ExceptionHandler(AccesoDenegadoException.class)
+public ResponseEntity<String> handleAccesoDenegado(AccesoDenegadoException ex) {
+    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
+}
 }

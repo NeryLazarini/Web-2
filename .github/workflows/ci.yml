@@ -1,0 +1,33 @@
+name: CI - Tests y Build
+
+on:
+  push:
+    branches: [ main, tp3 ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        # Si tu repo es directamente 'api-blank', borra estas 3 lineas de 'defaults'
+        working-directory: TP1/api-blank
+
+    steps:
+      - name: Clonar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Java 25
+        uses: actions/setup-java@v4
+        with:
+          java-version: '25'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Dar permisos de ejecucion a mvnw
+        run: chmod +x mvnw
+
+      - name: Ejecutar pruebas unitarias e integracion (verify)
+        run: ./mvnw clean verify
