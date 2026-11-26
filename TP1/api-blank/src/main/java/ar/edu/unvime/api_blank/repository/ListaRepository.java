@@ -5,8 +5,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ListaRepository {
-    List<Lista> findAll();
-    Optional<Lista> findById(Long id);
     Lista save(Lista lista);
-    boolean deleteById(Long id);
+    List<Lista> findAll();
+    List<Lista> findByUsuarioId(Long usuarioId);
+    Optional<Lista> findById(Long id);
+    void deleteById(Long id);
 }

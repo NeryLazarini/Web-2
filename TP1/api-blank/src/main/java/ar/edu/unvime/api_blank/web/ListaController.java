@@ -1,16 +1,15 @@
 package ar.edu.unvime.api_blank.web;
 
-import ar.edu.unvime.api_blank.domain.Favorito;
 import ar.edu.unvime.api_blank.domain.Lista;
-import ar.edu.unvime.api_blank.dto.FavoritoOutputDTO; // Importá tu DTO de favorito
+import ar.edu.unvime.api_blank.dto.FavoritoOutputDTO;
 import ar.edu.unvime.api_blank.dto.ListaInputDTO;
 import ar.edu.unvime.api_blank.dto.ListaOutputDTO;
 import ar.edu.unvime.api_blank.repository.FavoritoRepository;
 import ar.edu.unvime.api_blank.service.ListaService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import jakarta.validation.Valid;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,16 +28,16 @@ public class ListaController {
 
     @PostMapping
     public ResponseEntity<ListaOutputDTO> crearLista(@Valid @RequestBody ListaInputDTO dto) {
-        Lista nuevaLista = new Lista(null, dto.getNombre());
+        Lista nuevaLista = new Lista(null, dto.getNombre(), null);
         Lista guardada = listaService.guardar(nuevaLista);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new ListaOutputDTO(guardada.getId(), guardada.getNombre()));
+                .body(new ListaOutputDTO(guardada.getId(), guardada.getNombre(), guardada.getUsuarioId()));
     }
 
     @GetMapping
     public ResponseEntity<List<ListaOutputDTO>> listarListas() {
         List<ListaOutputDTO> listas = listaService.obtenerTodas().stream()
-                .map(l -> new ListaOutputDTO(l.getId(), l.getNombre()))
+                .map(l -> new ListaOutputDTO(l.getId(), l.getNombre(), l.getUsuarioId()))
                 .collect(Collectors.toList());
         return ResponseEntity.ok(listas);
     }
@@ -46,14 +45,14 @@ public class ListaController {
     @GetMapping("/{id}")
     public ResponseEntity<ListaOutputDTO> obtenerLista(@PathVariable Long id) {
         Lista lista = listaService.obtenerPorId(id);
-        return ResponseEntity.ok(new ListaOutputDTO(lista.getId(), lista.getNombre()));
+        return ResponseEntity.ok(new ListaOutputDTO(lista.getId(), lista.getNombre(), lista.getUsuarioId()));
     }
 
     @GetMapping("/{id}/favoritos")
     public ResponseEntity<List<FavoritoOutputDTO>> obtenerFavoritosDeLista(@PathVariable Long id) {
-        // Verificamos que la lista exista primero
+        // Verificamos que la lista exista y pertenezca al usuario (o sea ADMIN)
         listaService.obtenerPorId(id);
-        
+
         List<FavoritoOutputDTO> favoritos = favoritoRepository.findByListaId(id).stream()
                 .map(f -> {
                     FavoritoOutputDTO dto = new FavoritoOutputDTO();
@@ -61,7 +60,6 @@ public class ListaController {
                     dto.setProductoId(f.getProductoId());
                     dto.setNotaPersonal(f.getNotaPersonal());
                     dto.setListaId(f.getListaId());
-                    // Agregá la fecha si la tenés en tu DTO
                     return dto;
                 })
                 .collect(Collectors.toList());
@@ -73,12 +71,11 @@ public class ListaController {
         listaService.eliminar(id);
         return ResponseEntity.noContent().build();
     }
-    
+
     @PostMapping("/{origenId}/mover-favoritos")
     public ResponseEntity<Void> moverFavoritos(
-            @PathVariable Long origenId, 
+            @PathVariable Long origenId,
             @RequestParam Long destinoId) {
-        
         listaService.moverFavoritos(origenId, destinoId);
         return ResponseEntity.noContent().build();
     }

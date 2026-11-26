@@ -17,3 +17,11 @@ Se resolvió con una migración nueva (V4) en lugar de modificar las anteriores 
 El método `moverFavoritos` del `ListaService` fue marcado con `@Transactional`. Esta operación realiza múltiples escrituras en la base de datos: primero actualiza los favoritos (UPDATE) y luego elimina la lista origen (DELETE). 
 
 Si sacáramos el `@Transactional` y el sistema fallara justo después de actualizar los favoritos pero antes de eliminar la lista origen (por un corte de luz o un error del servidor), la base de datos perdería su consistencia (principio de Atomicidad de ACID). Los favoritos estarían en la lista nueva, pero la lista vieja seguiría existiendo vacía y sin sentido. Con `@Transactional`, garantizamos que o se completan todas las escrituras, o no se guarda ninguna (se hace un *rollback* automático).
+
+## TP3 - Punto 4.5: Donde vive la regla de autorizacion
+La regla de autorizacion por propiedad de recursos (validar si una lista pertenece al usuario autenticado o si tiene rol `ADMIN`) vive en la capa de **Service** (`ListaService`, centralizada en el metodo `buscarPropiaOFallar`), apoyada en `ContextoSeguridad`.
+
+Se eligio ubicarla ahi y no en el Controller ni en un filtro porque:
+1. Un filtro de Spring Security no tiene acceso al dato concreto en la base de datos para saber de quien es una lista puntual.
+2. El Controller solo debe encargarse del protocolo HTTP (recibir requests y devolver respuestas), mientras que definir quien puede operar sobre un recurso es una regla de negocio.
+3. Al vivir en el Service, la proteccion se aplica de forma uniforme sin importar que endpoint la llame y se puede probar facilmente con tests unitarios.
